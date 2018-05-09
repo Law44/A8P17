@@ -3,23 +3,22 @@ package com.company.manager;
 import com.company.model.Corredor;
 import com.company.model.Equip;
 
+import java.io.*;
+
 public class ManagerCorredors {
     static Corredor[] corredors = new Corredor[100];
 
-    public static Corredor inscriureCorredor(String nom, Equip equip){
+    public static Corredor inscriureCorredor(String nom, Equip equip) throws IOException {
         if(equip == null){
             return null;
         }
+        DataOutputStream out = new DataOutputStream(new BufferedOutputStream(
+                new FileOutputStream("Corredores.txt", true)));
 
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] == null){
-                Corredor corredor = new Corredor(nom, equip.id);
-                corredor.id = obtenirUltimIdCorredor() + 1;
-                corredors[i] = corredor;
-
-                return corredor;
-            }
-        }
+        out.writeChars(nom);
+        out.writeChars(String.valueOf(56));
+        out.writeChars(String.valueOf(1));
+        out.close();
 
         return null;
     }
