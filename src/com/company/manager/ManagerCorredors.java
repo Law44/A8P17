@@ -12,36 +12,45 @@ public class ManagerCorredors {
         if(equip == null){
             return null;
         }
-        DataOutputStream out = new DataOutputStream(new BufferedOutputStream(
-                new FileOutputStream("Corredores.txt", true)));
+        FileWriter out = new FileWriter("Corredors.txt", true);
 
-        out.writeChars(nom);
-        out.writeChars(String.valueOf(56));
-        out.writeChars(String.valueOf(1));
+        out.write(nom + ":");
+        out.write(equip.id + ":");
+        out.write(String.valueOf(1000+1) + "\n");
         out.close();
 
         return null;
     }
 
-    public static Corredor obtenirCorredor(int id){
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null && corredors[i].id == id){
-                return corredors[i];
+    public static Corredor obtenirCorredor(int id) throws IOException {
+       BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+       String c;
+       while ((c = reader.readLine()) != null) {
+           String[] partes = c.split(":");
+            if (id == Integer.parseInt(partes[2])){
+                Corredor corredor = new Corredor(partes[0], Integer.parseInt(partes[1]));
+                corredor.id = id;
+                return corredor;
             }
-        }
+
+       }
 
         return null;
     }
 
-    public static Corredor[] obtenirLlistaCorredors(){
+    public static Corredor[] obtenirLlistaCorredors() throws IOException {
         Corredor[] llistaCorredors = new Corredor[obtenirNumeroCorredors()];
+        BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+        String c;
+        int cont = 0;
+        while ((c = reader.readLine()) != null) {
+            String[] partes = c.split(":");
+            Corredor corredor = new Corredor(partes[0], Integer.parseInt(partes[1]));
+            corredor.id = Integer.parseInt(partes[2]);
+            llistaCorredors[cont] = corredor;
+            cont++;
 
-        int j = 0;
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null){
-                llistaCorredors[j] = corredors[i];
-                j++;
-            }
+
         }
 
         return llistaCorredors;
@@ -61,11 +70,15 @@ public class ManagerCorredors {
         return llistaCorredors;
     }
 
-    public static boolean existeixCorredor(String nom){
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null && corredors[i].nom.toLowerCase().equals(nom.toLowerCase())){
+    public static boolean existeixCorredor(String nom) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+        String c;
+        while ((c = reader.readLine()) != null) {
+            String[] partes = c.split(":");
+            if (nom.equals(partes[0])){
                 return true;
             }
+
         }
 
         return false;
@@ -110,12 +123,13 @@ public class ManagerCorredors {
         return maxId;
     }
 
-    private static int obtenirNumeroCorredors(){
+    private static int obtenirNumeroCorredors() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+        String c;
         int count = 0;
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null){
-                count++;
-            }
+        while ((c = reader.readLine()) != null) {
+            count++;
+
         }
 
         return count;
