@@ -4,9 +4,11 @@ import com.company.model.Corredor;
 import com.company.model.Equip;
 
 import java.io.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.*;
 
 public class ManagerCorredors {
-    static Corredor[] corredors = new Corredor[100];
 
     public static Corredor inscriureCorredor(String nom, Equip equip) throws IOException {
         if(equip == null){
@@ -16,7 +18,7 @@ public class ManagerCorredors {
 
         out.write(nom + ":");
         out.write(equip.id + ":");
-        out.write(String.valueOf(1000+1) + "\n");
+        out.write(obtenirUltimIdCorredor() + "\n");
         out.close();
 
         return null;
@@ -56,15 +58,21 @@ public class ManagerCorredors {
         return llistaCorredors;
     }
 
-    public static Corredor[] buscarCorredorsPerNom(String nom){
+    public static Corredor[] buscarCorredorsPerNom(String nom) throws IOException {
         Corredor[] llistaCorredors = new Corredor[obtenirNumeroCorredorsPerNom(nom)];
-
-        int j = 0;
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null && corredors[i].nom.toLowerCase().contains(nom.toLowerCase())){
-                llistaCorredors[j] = corredors[i];
-                j++;
+        BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+        String c;
+        int cont = 0;
+        while ((c = reader.readLine()) != null) {
+            String[] partes = c.split(":");
+            if(partes[0].toLowerCase().contains(nom.toLowerCase())) {
+                Corredor corredor = new Corredor(partes[0], Integer.parseInt(partes[1]));
+                corredor.id = Integer.parseInt(partes[2]);
+                llistaCorredors[cont] = corredor;
+                cont++;
             }
+
+
         }
 
         return llistaCorredors;
@@ -84,40 +92,93 @@ public class ManagerCorredors {
         return false;
     }
 
-    public static void modificarNomCorredor(int id, String nouNom){
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null && corredors[i].id == id){
-                corredors[i].nom = nouNom;
+    public static void modificarNomCorredor(int id, String nouNom) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+        FileWriter out = new FileWriter("Corredors2.txt", true);
+        String c;
+        while ((c = reader.readLine()) != null) {
+            String[] partes = c.split(":");
+            if (Integer.parseInt(partes[2]) != id){
+                out.write(partes[0] + ":");
+                out.write(partes[1] + ":");
+                out.write(partes[2] + "\n");
+
             }
+            else {
+                out.write(nouNom + ":");
+                out.write(partes[1] + ":");
+                out.write(partes[2] + "\n");
+
+            }
+
         }
+        out.close();
+        reader.close();
+
+        Files.move(FileSystems.getDefault().getPath("Corredors2.txt"), FileSystems.getDefault().getPath("Corredors.txt"), REPLACE_EXISTING);
+
     }
 
-    public static void modificarEquipCorredor(int id, Equip nouEquip){
+    public static void modificarEquipCorredor(int id, Equip nouEquip) throws IOException {
         if(nouEquip == null){
             return;
         }
+        BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+        FileWriter out = new FileWriter("Corredors2.txt", true);
+        String c;
+        while ((c = reader.readLine()) != null) {
+            String[] partes = c.split(":");
+            if (Integer.parseInt(partes[2]) != id){
+                out.write(partes[0] + ":");
+                out.write(partes[1] + ":");
+                out.write(partes[2] + "\n");
 
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null && corredors[i].id == id){
-                corredors[i].idEquip = nouEquip.id;
             }
+            else {
+                out.write(partes[0] + ":");
+                out.write(nouEquip.id + ":");
+                out.write(partes[2] + "\n");
+
+            }
+
         }
+        out.close();
+        reader.close();
+
+        Files.move(FileSystems.getDefault().getPath("Corredors2.txt"), FileSystems.getDefault().getPath("Corredors.txt"), REPLACE_EXISTING);
+
     }
 
-    public static void esborrarCorredor(int id){
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null && corredors[i].id == id){
-                corredors[i] = null;
+    public static void esborrarCorredor(int id) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+        FileWriter out = new FileWriter("Corredors2.txt", true);
+        String c;
+        while ((c = reader.readLine()) != null) {
+            String[] partes = c.split(":");
+            if (Integer.parseInt(partes[2]) != id){
+                out.write(partes[0] + ":");
+                out.write(partes[1] + ":");
+                out.write(partes[2] + "\n");
+
             }
         }
+        out.close();
+        reader.close();
+
+        Files.move(FileSystems.getDefault().getPath("Corredors2.txt"), FileSystems.getDefault().getPath("Corredors.txt"), REPLACE_EXISTING);
+
     }
 
-    private static int obtenirUltimIdCorredor(){
+    private static int obtenirUltimIdCorredor() throws IOException {
         int maxId = 0;
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null && corredors[i].id > maxId){
-                maxId = corredors[i].id;
+        BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+        String c;
+        while ((c = reader.readLine()) != null) {
+            String[] partes = c.split(":");
+            if (Integer.parseInt(partes[2]) > maxId) {
+                maxId = Integer.parseInt(partes[2]);
             }
+
         }
 
         return maxId;
@@ -135,12 +196,16 @@ public class ManagerCorredors {
         return count;
     }
 
-    private static int obtenirNumeroCorredorsPerNom(String nom){
+    public static int obtenirNumeroCorredorsPerNom(String nom) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("Corredors.txt"));
+        String c;
         int count = 0;
-        for (int i = 0; i < corredors.length; i++) {
-            if(corredors[i] != null && corredors[i].nom.toLowerCase().contains(nom.toLowerCase())){
+        while ((c = reader.readLine()) != null) {
+            String[] partes = c.split(":");
+            if(partes[0].toLowerCase().contains(nom.toLowerCase())){
                 count++;
             }
+
         }
 
         return count;
