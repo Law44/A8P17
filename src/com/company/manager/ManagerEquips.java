@@ -2,29 +2,51 @@ package com.company.manager;
 
 import com.company.model.Equip;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
+
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.READ;
+import static java.nio.file.StandardOpenOption.WRITE;
+
 public class ManagerEquips {
     static Equip[] equips = new Equip[100];
+    static int MAXNOM = 12;
+    static int MAXID = 4;
 
-    public static Equip inscriureEquip(String nom){
-        for (int i = 0; i < equips.length; i++) {
-            if(equips[i] == null){
-                Equip equip = new Equip(nom);
-                equip.id = obtenirUltimIdEquip() + 1;
-                equips[i] = equip;
+    public static Equip inscriureEquip(String nom) throws IOException {
+        FileChannel fc = (FileChannel.open(FileSystems.getDefault().getPath("equips.txt"), READ, WRITE, CREATE));
+        long posFinal = fc.size();
 
-                return equip;
-            }
-        }
+        fc.position(posFinal);
+        fc.write(ByteBuffer.wrap(nom.getBytes()));
+
+        int id = (int) posFinal/(MAXNOM/MAXID)+1;
+        ByteBuffer byteBuffer = ByteBuffer.allocate(MAXID);
+        byteBuffer.putInt(0, id);
+
+        fc.position(posFinal+MAXNOM);
+        fc.write(byteBuffer);
 
         return null;
     }
 
-    public static Equip obtenirEquip(int id){
-        for (int i = 0; i < equips.length; i++) {
-            if(equips[i] != null && equips[i].id == id){
-                return equips[i];
-            }
-        }
+
+    public static Equip obtenirEquip(int id) throws IOException {
+        FileChannel fc = (FileChannel.open(FileSystems.getDefault().getPath("equips.txt"), READ, WRITE, CREATE));
+        long posFinal = fc.size();
+        fc.position((id-1) * (MAXNOM+MAXID));
+        ByteBuffer byteBufferNom = ByteBuffer.allocate(MAXNOM);
+
+        fc.read(byteBufferNom);
+
+        String nom = new String(byteBufferNom.array(), Charset.forName("UTF-8"));
 
         return null;
     }
