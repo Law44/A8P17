@@ -27,51 +27,76 @@ public class ManagerEquips {
         fc.position(posFinal);
         fc.write(ByteBuffer.wrap(nom.getBytes()));
 
-        int id = (int) posFinal/(MAXNOM/MAXID)+1;
+        int id = (int) (posFinal/(MAXNOM+MAXID))+1;
         ByteBuffer byteBuffer = ByteBuffer.allocate(MAXID);
         byteBuffer.putInt(0, id);
 
         fc.position(posFinal+MAXNOM);
         fc.write(byteBuffer);
-
-        return null;
+        Equip equip = new Equip(nom);
+        equip.id = id;
+        return equip;
     }
 
 
     public static Equip obtenirEquip(int id) throws IOException {
         FileChannel fc = (FileChannel.open(FileSystems.getDefault().getPath("equips.txt"), READ, WRITE, CREATE));
         long posFinal = fc.size();
+
         fc.position((id-1) * (MAXNOM+MAXID));
         ByteBuffer byteBufferNom = ByteBuffer.allocate(MAXNOM);
 
         fc.read(byteBufferNom);
+        String nom = new String(byteBufferNom.array(), Charset.forName("UTF-8"));
+        Equip equip = new Equip(nom);
+        equip.id = id;
 
+        return equip;
+    }
+
+    public static Equip obtenirEquip(String nom) throws IOException {
+        long pos = 0;
+            FileChannel fileChannel = FileChannel.open(FileSystems.getDefault().getPath("equips.txt"), READ, CREATE);
+            long fin=fileChannel.size();
+            while(pos<fin) {
+                fileChannel.position(pos);
+                ByteBuffer byteBuffer = ByteBuffer.allocate(MAXNOM);
+                fileChannel.read(byteBuffer);
+                String nomC = new String(byteBuffer.array(), Charset.forName("UTF-8"));
+                int larg=nom.length();
+                String prueba=nomC.substring(0,larg);
+
+                if (prueba.toLowerCase().equals(nom.toLowerCase())) {
+
+                    ByteBuffer byteBuffer1 = ByteBuffer.allocate(MAXID);
+                    fileChannel.position(pos+MAXNOM);
+                    fileChannel.read(byteBuffer1);
+                    int id =byteBuffer1.getInt(0);
+                    Equip equip = new Equip(nom);
+                    equip.id = id;
+                    return equip;
+                }
+                pos+=MAXNOM+MAXID;
+            }
+
+
+
+        return null;
+    }
+
+    public static String obtenirNomEquip(int id) throws IOException {
+        FileChannel fc = (FileChannel.open(FileSystems.getDefault().getPath("equips.txt"), READ, WRITE, CREATE));
+        long posFinal = fc.size();
+        fc.position((id-1) * (MAXNOM+MAXID));
+        ByteBuffer byteBufferNom = ByteBuffer.allocate(MAXNOM);
+
+        fc.read(byteBufferNom);
         String nom = new String(byteBufferNom.array(), Charset.forName("UTF-8"));
 
-        return null;
+        return nom;
     }
 
-    public static Equip obtenirEquip(String nom){
-        for (int i = 0; i < equips.length; i++) {
-            if(equips[i] != null && equips[i].nom.equals(nom)){
-                return equips[i];
-            }
-        }
-
-        return null;
-    }
-
-    public static String obtenirNomEquip(int id){
-        for (int i = 0; i < equips.length; i++) {
-            if(equips[i] != null && equips[i].id == id){
-                return equips[i].nom;
-            }
-        }
-
-        return "";
-    }
-
-    public static Equip[] obtenirLlistaEquips(){
+    public static Equip[] obtenirLlistaEquips() throws IOException {
         Equip[] llistaEquips = new Equip[obtenirNumeroEquips()];
 
         int j = 0;
@@ -109,20 +134,20 @@ public class ManagerEquips {
         return false;
     }
 
-    public static void modificarNomEquip(int id, String nouNom){
-        for (int i = 0; i < equips.length; i++) {
-            if(equips[i] != null && equips[i].id == id){
-                equips[i].nom = nouNom;
-            }
-        }
+    public static void modificarNomEquip(int id, String nouNom) throws IOException {
+        FileChannel fc = (FileChannel.open(FileSystems.getDefault().getPath("equips.txt"), READ, WRITE, CREATE));
+        fc.position((id-1) * (MAXNOM+MAXID));
+        fc.write(ByteBuffer.wrap(nouNom.getBytes()));
     }
 
-    public static void esborrarEquip(int id){
-        for (int i = 0; i < equips.length; i++) {
-            if(equips[i] != null && equips[i].id == id){
-                equips[i] = null;
-            }
+    public static void esborrarEquip(int id) throws IOException {
+        FileChannel fc = (FileChannel.open(FileSystems.getDefault().getPath("equips.txt"), READ, WRITE, CREATE));
+        fc.position((id-1) * (MAXNOM+MAXID));
+        String nom = "";
+        for (int i = 0; i < MAXID+MAXNOM; i++) {
+            nom+= " ";
         }
+        fc.write(ByteBuffer.wrap(nom.getBytes()));
     }
 
     private static int obtenirUltimIdEquip(){
@@ -136,13 +161,24 @@ public class ManagerEquips {
         return maxId;
     }
 
-    private static int obtenirNumeroEquips(){
+    public static int obtenirNumeroEquips() throws IOException {
         int count = 0;
-        for (int i = 0; i < equips.length; i++) {
-            if(equips[i] != null){
+        long inicio = 0;
+        FileChannel fc = (FileChannel.open(FileSystems.getDefault().getPath("equips.txt"), READ, WRITE, CREATE));
+        long posFinal = fc.size();
+
+        while (inicio<posFinal) {
+            fc.position(inicio);
+            ByteBuffer byteBufferNom = ByteBuffer.allocate(MAXNOM);
+            fc.read(byteBufferNom);
+            String nom = new String(byteBufferNom.array(), Charset.forName("UTF-8"));
+            if (nom.charAt(0) != ' ') {
                 count++;
             }
+            inicio+=MAXNOM+MAXID;
+
         }
+
 
         return count;
     }

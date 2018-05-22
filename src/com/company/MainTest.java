@@ -9,9 +9,10 @@ import java.io.IOException;
 
 public class MainTest {
     public static void main(String[] args) throws IOException {
-       ManagerEquips.inscriureEquip("Los pepes");
-       ManagerEquips.inscriureEquip("Los papas");
-       ManagerEquips.inscriureEquip("Los popos");
+//        ManagerEquips.inscriureEquip("Los pepes");
+//        ManagerEquips.inscriureEquip("Los papas");
+//        ManagerEquips.inscriureEquip("Los popos");
+        ManagerEquips.modificarNomEquip(1, "Los Davids");
 
 
     }
