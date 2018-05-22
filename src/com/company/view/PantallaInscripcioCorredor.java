@@ -52,7 +52,6 @@ public class PantallaInscripcioCorredor {
                             WidgetCorredors.seleccionar(corredor);
                             Missatge.mostrarOk("Corredor inscrit correctament");
                             LectorTeclat.llegirContinuar();
-
                             return;
                         }
                     }
