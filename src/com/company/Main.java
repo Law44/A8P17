@@ -15,13 +15,13 @@ public class Main {
         ManagerEquips.inscriureEquip("Equip B");
         ManagerEquips.inscriureEquip("Equip C");
         ManagerEquips.inscriureEquip("Equip D");
-        ManagerCorredors2.inscriureCorredor("Corredor Lliure", ManagerEquips.obtenirEquip("LLiure"));
-        ManagerCorredors2.inscriureCorredor("Corredor A", ManagerEquips.obtenirEquip("Equip A"));
-        ManagerCorredors2.inscriureCorredor("Corredor AA", ManagerEquips.obtenirEquip("Equip A"));
-        ManagerCorredors2.inscriureCorredor("Corredor AAA", ManagerEquips.obtenirEquip("Equip A"));
-        ManagerCorredors2.inscriureCorredor("Corredor B", ManagerEquips.obtenirEquip("Equip B"));
-        ManagerCorredors2.inscriureCorredor("Corredor BB", ManagerEquips.obtenirEquip("Equip B"));
-        ManagerCorredors2.inscriureCorredor("Corredor C", ManagerEquips.obtenirEquip("Equip C"));
+        ManagerCorredors.inscriureCorredor("Corredor Lliure", ManagerEquips.obtenirEquip("LLiure"));
+        ManagerCorredors.inscriureCorredor("Corredor A", ManagerEquips.obtenirEquip("Equip A"));
+        ManagerCorredors.inscriureCorredor("Corredor AA", ManagerEquips.obtenirEquip("Equip A"));
+        ManagerCorredors.inscriureCorredor("Corredor AAA", ManagerEquips.obtenirEquip("Equip A"));
+        ManagerCorredors.inscriureCorredor("Corredor B", ManagerEquips.obtenirEquip("Equip B"));
+        ManagerCorredors.inscriureCorredor("Corredor BB", ManagerEquips.obtenirEquip("Equip B"));
+        ManagerCorredors.inscriureCorredor("Corredor C", ManagerEquips.obtenirEquip("Equip C"));
 
         PantallaMenuPrincipal.mostrar();
     }

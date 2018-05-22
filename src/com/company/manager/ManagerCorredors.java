@@ -18,7 +18,7 @@ public class ManagerCorredors {
 
         out.write(nom + ":");
         out.write(equip.id + ":");
-        out.write(obtenirUltimIdCorredor() + "\n");
+        out.write((obtenirUltimIdCorredor()+1) + "\n");
         out.close();
 
         return null;
