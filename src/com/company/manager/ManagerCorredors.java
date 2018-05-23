@@ -21,7 +21,9 @@ public class ManagerCorredors {
         out.write((obtenirUltimIdCorredor()+1) + "\n");
         out.close();
 
-        return null;
+        Corredor corredor = new Corredor(nom, equip.id);
+        corredor.id = obtenirUltimIdCorredor()+1;
+        return corredor;
     }
 
     public static Corredor obtenirCorredor(int id) throws IOException {
@@ -32,10 +34,12 @@ public class ManagerCorredors {
             if (id == Integer.parseInt(partes[2])){
                 Corredor corredor = new Corredor(partes[0], Integer.parseInt(partes[1]));
                 corredor.id = id;
+                reader.close();
                 return corredor;
             }
 
        }
+       reader.close();
 
         return null;
     }
@@ -54,6 +58,7 @@ public class ManagerCorredors {
 
 
         }
+        reader.close();
 
         return llistaCorredors;
     }
@@ -74,7 +79,7 @@ public class ManagerCorredors {
 
 
         }
-
+        reader.close();
         return llistaCorredors;
     }
 
@@ -84,11 +89,12 @@ public class ManagerCorredors {
         while ((c = reader.readLine()) != null) {
             String[] partes = c.split(":");
             if (nom.equals(partes[0])){
+                reader.close();
                 return true;
             }
 
         }
-
+        reader.close();
         return false;
     }
 
@@ -180,7 +186,7 @@ public class ManagerCorredors {
             }
 
         }
-
+        reader.close();
         return maxId;
     }
 
@@ -192,7 +198,7 @@ public class ManagerCorredors {
             count++;
 
         }
-
+        reader.close();
         return count;
     }
 
@@ -207,7 +213,7 @@ public class ManagerCorredors {
             }
 
         }
-
+        reader.close();
         return count;
     }
 }

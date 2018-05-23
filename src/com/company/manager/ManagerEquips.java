@@ -87,7 +87,6 @@ public class ManagerEquips {
 
         fc.read(byteBufferNom);
         String nom = new String(byteBufferNom.array(), Charset.forName("UTF-8"));
-
         return nom;
     }
 
@@ -95,25 +94,31 @@ public class ManagerEquips {
         Equip[] llistaEquips = new Equip[obtenirNumeroEquips()];
         int pos = 0;
         int cont = 0;
+        String vacio = "";
+        for (int i = 0; i < MAXNOM; i++) {
+            vacio += " ";
+        }
         FileChannel fc = FileChannel.open(FileSystems.getDefault().getPath("equips.txt"), READ, CREATE);
         long fin=fc.size();
         while(pos<fin) {
             fc.position(pos);
             ByteBuffer byteBuffer = ByteBuffer.allocate(MAXNOM);
             fc.read(byteBuffer);
+            String nomC = new String(byteBuffer.array(), Charset.forName("UTF-8"));
+
 
             ByteBuffer byteBuffer1 = ByteBuffer.allocate(MAXID);
             fc.position(pos+MAXNOM);
             fc.read(byteBuffer1);
             int id =byteBuffer1.getInt(0);
-            Equip equip = new Equip(obtenirNomEquip(id));
+            Equip equip = new Equip(nomC);
             equip.id = id;
-            llistaEquips[cont] = equip;
-            cont++;
-
+            if (!vacio.contains(nomC)) {
+                llistaEquips[cont] = equip;
+                cont++;
+            }
             pos += MAXNOM + MAXID;
         }
-
         return llistaEquips;
     }
 
